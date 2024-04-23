@@ -16,14 +16,15 @@ __all__ = ["TangNano9kPlatform"]
 class TangNano9kPlatform(GowinPlatform):
     part          = "GW1NR-LV9QN88PC6/I5"
     family        = "GW1NR-9C"
-    default_clk   = "clk27" # or "OSC" to use on-chip oscillator
+    # default_clk   = "clk27" # or "OSC" to use on-chip oscillator
+    default_clk   = "OSC" # or "OSC" to use on-chip oscillator
     osc_frequency = 2500000 # Hz
     board         = "tangnano9k"
     resources     = [
         Resource("clk27", 0, Pins("52", dir="i"),
                  Clock(27e6), Attrs(IO_TYPE="LVCMOS33")),
 
-        *ButtonResources(pins="3 4",
+        *ButtonResources(pins="3 4", invert=True,
                          attrs=Attrs(IO_TYPE="LVCMOS33")),
 
         # Pins 5 to 8 are JTAG (TMS, TCK, TDI, TDO) from BL702
