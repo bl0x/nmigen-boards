@@ -109,8 +109,8 @@ class NumatoNesoPlatform(XilinxPlatform):
             "d5": "G18",
             "d6": "J17",
             "d7": "J18",
-            "txe": "K16",
-            "rxf": "G13",
+            "txe_n": "K16",
+            "rxf_n": "G13",
             "wr_n": "M13",
             "rd_n": "D9",
              "siwub": "J18"
