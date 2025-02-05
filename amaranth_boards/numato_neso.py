@@ -7,21 +7,21 @@ from .resources import *
 
 """
 Board features:
-	FPGA: XC7A100T-2CSG324I
-	DDR3: 2Gb DDR3 (MT41J128M16JT-125:K, 400 MHz, 16 bit data)
-	Flash memory: 128 Mb SPI flash memory (N25Q128A13ESE40E or N25Q128A13EF840E)
-	Clock: 100MHz CMOS oscillator
-	USB: High-Speed USB 2.0 interface for On-board flash programming.
-	Revision V1: FT2232H Channel A is dedicated to SPI Flash /JTAG Programming.
-	                     Channel B can be used for custom applications.
-	Revision V2: FT2232H Channel B is dedicated to SPI Flash /JTAG Programming.
-	                     Channel A can be used for custom applications.
-	On-board voltage regulators for single power rail operation
-	FPGA configuration via JTAG or USB
-	Maximum IOs for user-defined purposes FPGA – 140 IOs FT2232H – 8 IOs
+    FPGA: XC7A100T-2CSG324I
+    DDR3: 2Gb DDR3 (MT41J128M16JT-125:K, 400 MHz, 16 bit data)
+    Flash memory: 128 Mb SPI flash memory (N25Q128A13ESE40E or N25Q128A13EF840E)
+    Clock: 100MHz CMOS oscillator
+    USB: High-Speed USB 2.0 interface for On-board flash programming.
+    Revision V1: FT2232H Channel A is dedicated to SPI Flash /JTAG Programming.
+                         Channel B can be used for custom applications.
+    Revision V2: FT2232H Channel B is dedicated to SPI Flash /JTAG Programming.
+                         Channel A can be used for custom applications.
+    On-board voltage regulators for single power rail operation
+    FPGA configuration via JTAG or USB
+    Maximum IOs for user-defined purposes FPGA – 140 IOs FT2232H – 8 IOs
 
 Documentation:
-	https://numato.com/docs/neso-artix-7-fpga-development-board/
+    https://numato.com/docs/neso-artix-7-fpga-development-board/
 
 Example Usage:
     platform = NumatoNesoPlatform(toolchain="Vivado")
@@ -33,25 +33,25 @@ Supported programmer:
       FTDI_SER(0x2a19, 0x1005, FTDI_INTF_[A|B], 0x08, 0x4b, 0x00, 0x00)
 
 Voltage settings:
-	set_property CFGBVS VCCO [current_design]
-	set_property CONFIG_VOLTAGE 3.3 [current_design]
+    set_property CFGBVS VCCO [current_design]
+    set_property CONFIG_VOLTAGE 3.3 [current_design]
 
 """
 
 __all__ = ["NumatoNesoPlatform"]
 
 class NumatoNesoPlatform(XilinxPlatform):
-	device = "xc7a100t"
-	package = "csg324"
-	speed = "2"
-	default_clk = "clk100"
-	default_rst = "rst"
+    device = "xc7a100t"
+    package = "csg324"
+    speed = "2"
+    default_clk = "clk100"
+    default_rst = "rst"
     resources   = [
-    	# On-board oscillator
+        # On-board oscillator
         Resource("clk100", 0, Pins("F4", dir="i"),
                  Clock(100e6), Attrs(IOSTANDARD="LVCMOS33")),
        
-       	# DDR3 RAM
+        # DDR3 RAM
         Resource("ddr3", 0,
             Subsignal("rst",    PinsN("U8", dir="o")),
             Subsignal("clk",    DiffPairs("L6", "L5", dir="o"),
@@ -72,10 +72,10 @@ class NumatoNesoPlatform(XilinxPlatform):
             Attrs(IOSTANDARD="SSTL15", SLEW="FAST"),
         ),
 
-		# QSPI Flash
-		# To be verified:
-        SPIFlashResource(0,
-        	# IO[0..3] = [K17, K18, L14, M14]
+        # QSPI Flash
+        # To be verified:
+        *SPIFlashResources(0,
+            # IO[0..3] = [K17, K18, L14, M14]
             cs_n="L13", clk="E9", copi="K17", cipo="K18", wp_n="L14",
             hold_n="F18", 
             attrs=Attrs(IOSTANDARD="LVCMOS33")
@@ -98,23 +98,23 @@ class NumatoNesoPlatform(XilinxPlatform):
             M16 M17 R18 T18  P15 R15 N15 N16  N14 P14 P17 R17  N17 P18 U16 V17
             U17 U18 U14 V14  V15 V16 T14 T15  R16 T16  T9 T10  T13 U13 T11 U11
             R10 R11 V10 V11  U12 V12 
-            """)
-		# FTDI Chip
-		Connector("ftdi", 0, { # IOSTANDARD="LVCMOS33"
-		    "d0": "A18",
-		    "d1": "B18",
-		    "d2": "D18",
-		    "d3": "E18",
-		    "d4": "F18",
-		    "d5": "G18",
-		    "d6": "J17",
-		    "d7": "J18",
-		    "txe": "K16",
-		    "rxf": "G13",
-		    "wr": "M13",
-		    "rd": "D9",
- 		    "siwub": "J18"
- 		})
+            """),
+        # FTDI Chip
+        Connector("ftdi", 0, { # IOSTANDARD="LVCMOS33"
+            "d0": "A18",
+            "d1": "B18",
+            "d2": "D18",
+            "d3": "E18",
+            "d4": "F18",
+            "d5": "G18",
+            "d6": "J17",
+            "d7": "J18",
+            "txe": "K16",
+            "rxf": "G13",
+            "wr_n": "M13",
+            "rd_n": "D9",
+             "siwub": "J18"
+         })
     ]
     
     def toolchain_prepare(self, fragment, name, **kwargs):
